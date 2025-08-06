@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Reserva de Viajes</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #dbeafe;
+            color: #1e40af;
+            margin: 0; padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background-color: #eff6ff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+        }
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 6px;
+            border: 1px solid #93c5fd;
+            border-radius: 5px;
+            background-color: #f0f9ff;
+        }
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            font-weight: bold;
+            background-color: #3b82f6;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2563eb;
+        }
+        #mensaje {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+            color: #2563eb;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            background-color: #dbeafe;
+            padding: 10px;
+            margin: 6px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Reserva de Viajes</h1>
+
+    <h2>Formulario</h2>
+    <form id="reservaForm">
+        <label for="nombreUsuario">Nombre de usuario:</label>
+        <input type="text" id="nombreUsuario" required />
+
+        <label for="destino">Destino:</label>
+        <input type="text" id="destino" required />
+
+        <label for="cantidadPersonas">Cantidad de personas:</label>
+        <input type="number" id="cantidadPersonas" min="1" required />
+
+        <button type="submit">Registrar reserva</button>
+    </form>
+
+    <p id="mensaje"></p>
+
+    <h2>Reservas existentes</h2>
+    <button onclick="listarReservas()">Cargar reservas</button>
+    <ul id="listaReservas"></ul>
+</div>
+
+<script>
+    document.getElementById("reservaForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const nombre = document.getElementById("nombreUsuario").value.trim();
+        const destino = document.getElementById("destino").value.trim();
+        const cantidad = parseInt(document.getElementById("cantidadPersonas").value);
+
+        if (!nombre || !destino || isNaN(cantidad) || cantidad < 1) {
+            document.getElementById("mensaje").innerText = "⚠️ Por favor complete todos los campos para enviar.";
+            return;
+        }
+
+        const reserva = {
+            nombreUsuario: nombre,
+            destino: destino,
+            cantidadPersonas: cantidad
+        };
+
+        fetch("/reservas", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(reserva)
+        })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("mensaje").innerText = "✅ " + data;
+                document.getElementById("reservaForm").reset();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("mensaje").innerText = "❌ Error al registrar la reserva.";
+            });
+    });
+
+    function listarReservas() {
+        fetch("/reservas")
+            .then(response => response.json())
+            .then(data => {
+                const lista = document.getElementById("listaReservas");
+                lista.innerHTML = "";
+                if (data.length === 0) {
+                    lista.innerHTML = "<li>No hay ninguna reserva registrada.</li>";
+                } else {
+                    data.forEach(r => {
+                        const li = document.createElement("li");
+                        li.innerText = `${r.nombreUsuario} → ${r.destino} - ${r.cantidadPersonas} persona${r.cantidadPersonas > 1 ? 's' : ''}`;
+                        lista.appendChild(li);
+                    });
+                }
+            })
+            .catch(() => {
+                document.getElementById("mensaje").innerText = "❌ Error al cargar las reservas.";
+            });
+    }
+</script>
+
+</body>
+</html>
