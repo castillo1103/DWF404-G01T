@@ -2,7 +2,7 @@
 
 ###No es el final lo voy a modificar más
 
-Para arrancarlo incicien el proyecto y despues ejecuten 
+Para arrancarlo inicien el proyecto y despues ejecuten 
 --  http://localhost:8080/index.html
 y ahi ingresan 
 
