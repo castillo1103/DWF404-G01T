@@ -6,13 +6,14 @@ excluir la lógica central de las funciones externas.</h3>
 <h1>⚙️Dependencias añadidas</h1>
 
 <h3>
-- Lombok para menos código.
+  
+-Lombok para menos código.
   
 - H2 para base de datos simulada.
   
 - Data JPA.
   
-- Sprinboot Test.
+- Springboot Test.
   
 - Springboot Web.
   
