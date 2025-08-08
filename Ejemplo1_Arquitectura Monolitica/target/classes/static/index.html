@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Reserva de Buses Escolares</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f7f9f1;
+            margin: 0; padding: 0;
+            color: #3a3a3a;
+        }
+        .overlay {
+            background-image: url('images/bus.jpg');
+
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            min-height: 100vh;
+            padding: 40px 15px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            max-width: 600px;
+            background-color: rgba(247, 249, 241, 0.9);
+            padding: 30px 35px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(101, 121, 82, 0.4);
+            border: 3px solid #a3b18a;
+        }
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #486b2e;
+            font-weight: 900;
+            text-shadow: 1px 1px 0 #d9e6c1;
+        }
+        label {
+            display: block;
+            margin-top: 18px;
+            font-weight: 700;
+            color: #5a6e32;
+        }
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+            padding: 9px 12px;
+            margin-top: 6px;
+            border: 2px solid #b4c28d;
+            border-radius: 6px;
+            background-color: #f1f6e7;
+            font-size: 16px;
+            color: #4a5c23;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #7b974a;
+            background-color: #e9f0d8;
+        }
+        button {
+            margin-top: 25px;
+            width: 100%;
+            padding: 14px;
+            font-weight: 900;
+            background-color: #8ca45a;
+            border: none;
+            border-radius: 8px;
+            color: #f4f9e9;
+            font-size: 17px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(140, 164, 90, 0.6);
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #6f8441;
+            box-shadow: 0 6px 8px rgba(111, 132, 65, 0.8);
+        }
+        #mensaje {
+            margin-top: 18px;
+            text-align: center;
+            font-weight: 700;
+            color: #6b8e23;
+            text-shadow: 1px 1px 0 #d9e6c1;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 15px;
+        }
+        li {
+            background-color: #dce4b0;
+            padding: 12px 14px;
+            margin: 7px 0;
+            border-radius: 8px;
+            color: #4a5c23;
+            font-weight: 600;
+            box-shadow: inset 0 0 5px rgba(76, 88, 25, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .detalle-reserva {
+            flex: 1 1 60%;
+            min-width: 220px;
+        }
+        .botones-reserva {
+            flex: 1 1 35%;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            min-width: 160px;
+        }
+        .btn-small {
+            background-color: #c49a6c;
+            border-radius: 5px;
+            border: none;
+            padding: 6px 14px;
+            color: #fff8f0;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-small:hover {
+            background-color: #a9783e;
+        }
+        .btn-delete {
+            background-color: #a96f4c;
+        }
+        .btn-delete:hover {
+            background-color: #7d4f36;
+        }
+    </style>
+</head>
+<body>
+<div class="overlay">
+    <div class="container">
+        <h1>Reserva de Buses Escolares</h1>
+
+        <h2>Formulario</h2>
+        <form id="reservaForm">
+            <input type="hidden" id="reservaId" />
+            <label for="nombreUsuario">Nombre del profesor a cargo:</label>
+            <input type="text" id="nombreUsuario" required />
+
+            <label for="destino">Destino turístico:</label>
+            <select id="destino" required>
+                <option value="">Seleccione un destino</option>
+                <option value="Ruta de Las Flores">Ruta de Las Flores</option>
+                <option value="Suchitoto">Suchitoto</option>
+                <option value="Cerro Verde">Cerro Verde</option>
+                <option value="Playa El Tunco">Playa El Tunco</option>
+                <option value="Puerta del Diablo">Puerta del Diablo</option>
+                <option value="Joya de Cerén">Joya de Cerén</option>
+                <option value="San Andrés">San Andrés</option>
+            </select>
+
+            <label for="cantidadPersonas">Cantidad de estudiantes:</label>
+            <input type="number" id="cantidadPersonas" min="1" max="90" required />
+
+            <button type="submit">Guardar reserva</button>
+        </form>
+
+        <p id="mensaje"></p>
+
+        <h2>Reservas registradas</h2>
+        <button onclick="listarReservas()">Cargar reservas</button>
+        <ul id="listaReservas"></ul>
+    </div>
+</div>
+
+<script>
+    document.getElementById("reservaForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const id = document.getElementById("reservaId").value;
+        const nombre = document.getElementById("nombreUsuario").value.trim();
+        const destino = document.getElementById("destino").value.trim();
+        const cantidad = parseInt(document.getElementById("cantidadPersonas").value);
+
+        if (!nombre || !destino || isNaN(cantidad) || cantidad < 1 || cantidad > 90) {
+            document.getElementById("mensaje").innerText = "⚠️ Por favor complete todos los campos para poder enviar el encargo.";
+            return;
+        }
+
+        const reserva = {
+            nombreUsuario: nombre,
+            destino: destino,
+            cantidadPersonas: cantidad
+        };
+
+        const metodo = id ? "PUT" : "POST";
+        const url = id ? "/reservas/" + id : "/reservas";
+
+        fetch(url, {
+            method: metodo,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(reserva)
+        })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("mensaje").innerText = "✅ " + data;
+                document.getElementById("reservaForm").reset();
+                document.getElementById("reservaId").value = "";
+                listarReservas();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("mensaje").innerText = "❌ Error al procesar la reserva.";
+            });
+    });
+
+    function listarReservas() {
+        fetch("/reservas")
+            .then(response => response.json())
+            .then(data => {
+                const lista = document.getElementById("listaReservas");
+                lista.innerHTML = "";
+                if (data.length === 0) {
+                    lista.innerHTML = "<li>No hay ninguna reserva registrada por el momento.</li>";
+                } else {
+                    data.forEach(r => {
+                        const li = document.createElement("li");
+
+                        const detalleDiv = document.createElement("div");
+                        detalleDiv.className = "detalle-reserva";
+                        detalleDiv.textContent = `${r.nombreUsuario} -- ${r.destino} -- ${r.cantidadPersonas} estudiante${r.cantidadPersonas > 1 ? 's' : ''}`;
+
+                        const botonesDiv = document.createElement("div");
+                        botonesDiv.className = "botones-reserva";
+
+                        const btnEditar = document.createElement("button");
+                        btnEditar.className = "btn-small";
+                        btnEditar.textContent = "Editar";
+                        btnEditar.onclick = () => editarReserva(r.id);
+
+                        const btnEliminar = document.createElement("button");
+                        btnEliminar.className = "btn-small btn-delete";
+                        btnEliminar.textContent = "Eliminar";
+                        btnEliminar.onclick = () => eliminarReserva(r.id);
+
+                        botonesDiv.appendChild(btnEditar);
+                        botonesDiv.appendChild(btnEliminar);
+
+                        li.appendChild(detalleDiv);
+                        li.appendChild(botonesDiv);
+
+                        lista.appendChild(li);
+                    });
+                }
+            })
+            .catch(() => {
+                document.getElementById("mensaje").innerText = "❌ Ha habido un error al cargar las reservas.";
+            });
+    }
+
+    function editarReserva(id) {
+        fetch("/reservas/id/" + id)
+            .then(response => response.json())
+            .then(r => {
+                document.getElementById("reservaId").value = r.id;
+                document.getElementById("nombreUsuario").value = r.nombreUsuario;
+                document.getElementById("destino").value = r.destino;
+                document.getElementById("cantidadPersonas").value = r.cantidadPersonas;
+            });
+    }
+
+    function eliminarReserva(id) {
+        fetch("/reservas/" + id, { method: "DELETE" })
+            .then(response => response.text())
+            .then(msg => {
+                document.getElementById("mensaje").innerText = "✅ " + msg;
+                listarReservas();
+            })
+            .catch(() => {
+                document.getElementById("mensaje").innerText = "❌ Error al eliminar su reserva.";
+            });
+    }
+</script>
+
+</body>
+</html>
