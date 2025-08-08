@@ -1,1 +1,1 @@
-<h2>🏛 Proyecto con Arquitectura Hexagonal<h2>
+<h1>🏛 Proyecto con Arquitectura Hexagonal<h1>
