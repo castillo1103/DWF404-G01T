@@ -18,4 +18,6 @@ url=jdbc:h2:mem:guia-jpa;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
 
 y contraseña: sa
 
+<img width="474" height="753" alt="image" src="https://github.com/user-attachments/assets/92c46512-6da8-47cc-89d8-9e28e9a715ed" />
+
 
